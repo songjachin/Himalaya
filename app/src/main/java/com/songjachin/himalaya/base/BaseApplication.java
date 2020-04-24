@@ -2,6 +2,7 @@ package com.songjachin.himalaya.base;
 
 import android.app.Application;
 
+import com.songjachin.himalaya.utils.LogUtil;
 import com.ximalaya.ting.android.opensdk.constants.DTransferConstants;
 import com.ximalaya.ting.android.opensdk.datatrasfer.CommonRequest;
 
@@ -9,6 +10,7 @@ public class BaseApplication extends Application {
 
     @Override
     public void onCreate() {
+
         super.onCreate();
         CommonRequest mXimalaya = CommonRequest.getInstanse();
         if(DTransferConstants.isRelease) {
@@ -22,5 +24,7 @@ public class BaseApplication extends Application {
             mXimalaya.setPackid("com.ximalaya.qunfeng");
             mXimalaya.init(this ,mAppSecret);
         }
+
+        LogUtil.init(this.getPackageName(), false);
     }
 }

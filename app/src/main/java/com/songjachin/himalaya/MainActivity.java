@@ -1,44 +1,76 @@
 package com.songjachin.himalaya;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.viewpager.widget.ViewPager;
 
 
+import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.View;
+
+import com.songjachin.himalaya.adapters.IndicatorAdapter;
+import com.songjachin.himalaya.adapters.MainContentAdapter;
+import com.songjachin.himalaya.indicators.CommonNavigator;
+import com.songjachin.himalaya.indicators.CommonNavigatorAdapter;
+import com.songjachin.himalaya.indicators.IPagerIndicator;
+import com.songjachin.himalaya.indicators.IPagerTitleView;
+import com.songjachin.himalaya.indicators.LinePagerIndicator;
+import com.songjachin.himalaya.indicators.MagicIndicator;
+import com.songjachin.himalaya.indicators.SimplePagerTitleView;
+import com.songjachin.himalaya.indicators.ViewPagerHelper;
+import com.songjachin.himalaya.utils.LogUtil;
 
 
-import com.ximalaya.ting.android.opensdk.datatrasfer.CommonRequest;
-import com.ximalaya.ting.android.opensdk.datatrasfer.IDataCallBack;
-import com.ximalaya.ting.android.opensdk.model.category.Category;
-import com.ximalaya.ting.android.opensdk.model.category.CategoryList;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends FragmentActivity {
     private static final String TAG = "MainActivity";
+    private MagicIndicator mMagicIndicator;
+    private ViewPager mContentPager;
+    private IndicatorAdapter mIndicatorAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Map<String, String> map = new HashMap<String, String>();
-        CommonRequest.getCategories(map, new IDataCallBack<CategoryList>() {
-            @Override
-            public void onSuccess(CategoryList categoryList) {
-                List<Category> categories = categoryList.getCategories();
-                int size = categories.size();
-                Log.d(TAG, "onSuccess: categories size --> " + size);
-                for (Category category : categories) {
-                    Log.d(TAG, "categories -->" + category.getCategoryName());
-                }
-            }
+        initView();
+        initEvent();
+    }
 
+    private void initEvent() {
+        mIndicatorAdapter.setOnIndicatorTabClickListener(new IndicatorAdapter.OnIndicatorTabClickListener() {
             @Override
-            public void onError(int i, String s) {
-                Log.e(TAG, "onError: error code "+ i + " error "+ s );
+            public void onTabClick(int index) {
+                LogUtil.d(TAG,"on click ---> "+ index );
+                if(mContentPager!=null){
+                    mContentPager.setCurrentItem(index);
+                }
             }
         });
     }
 
+    private void initView() {
+        mMagicIndicator = this.findViewById(R.id.main_indicator);
+        mMagicIndicator.setBackgroundColor(this.getResources().getColor(R.color.main_color));
+        //创建indicator的adapter
+        mIndicatorAdapter = new IndicatorAdapter(this);
+        CommonNavigator commonNavigator = new CommonNavigator(this);
+        commonNavigator.setAdapter(mIndicatorAdapter);
+        commonNavigator.setAdjustMode(true);
+
+
+        //ViewPager
+        mContentPager = this.findViewById(R.id.content_pager);
+        //make the viewpager ..adapter
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        MainContentAdapter contentAdapter = new MainContentAdapter(fragmentManager);
+        mContentPager.setAdapter(contentAdapter);
+        //bind the viewPager and the indicator
+        mMagicIndicator.setNavigator(commonNavigator);
+        ViewPagerHelper.bind(mMagicIndicator,mContentPager);
+    }
+
 }
+
+
