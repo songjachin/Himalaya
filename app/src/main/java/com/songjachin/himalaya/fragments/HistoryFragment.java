@@ -1,5 +1,6 @@
 package com.songjachin.himalaya.fragments;
 
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,9 +12,12 @@ import com.songjachin.himalaya.R;
 import com.songjachin.himalaya.base.BaseFragment;
 
 /**
- * Created by matthew on 2020/4/24 9:12
- * day day up!
+ * @author songjachin
+ * @ClassName HistoryFragment
+ * @Description
+ * @date 2020-04-25 10:18
  */
+
 public class HistoryFragment extends BaseFragment {
 
     @Override
@@ -21,4 +25,5 @@ public class HistoryFragment extends BaseFragment {
         View rootView = inflater.inflate(R.layout.fragment_history,container,false);
         return rootView;
     }
+
 }

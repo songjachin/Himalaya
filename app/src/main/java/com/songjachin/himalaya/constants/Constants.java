@@ -5,5 +5,5 @@ package com.songjachin.himalaya.constants;
  * day day up!
  */
 public class Constants {
-    public static final int RECOMMEND_COUNT = 20;
+    public static final int RECOMMEND_COUNT = 50;
 }

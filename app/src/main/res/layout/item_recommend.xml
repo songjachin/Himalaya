@@ -2,15 +2,15 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="75dp"
-    android:background="#ffffff">
+    android:background="@drawable/shape_album_bg">
 
-    <ImageView
+    <com.songjachin.himalaya.views.RoundRectImageView
         android:id="@+id/album_cover"
         android:layout_width="68dp"
         android:layout_height="65dp"
         android:layout_centerVertical="true"
         android:layout_marginLeft="5dp"
-        android:background="#ff00ff" />
+        android:scaleType="fitXY" />
 
     <LinearLayout
         android:layout_width="match_parent"
