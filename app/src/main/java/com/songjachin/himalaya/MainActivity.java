@@ -64,11 +64,11 @@ public class MainActivity extends FragmentActivity {
         mContentPager = this.findViewById(R.id.content_pager);
         //make the viewpager ..adapter
         FragmentManager fragmentManager = getSupportFragmentManager();
-        MainContentAdapter contentAdapter = new MainContentAdapter(fragmentManager);
+        MainContentAdapter contentAdapter = new MainContentAdapter(fragmentManager);//Fragment和page在这里绑定的
         mContentPager.setAdapter(contentAdapter);
         //bind the viewPager and the indicator
         mMagicIndicator.setNavigator(commonNavigator);
-        ViewPagerHelper.bind(mMagicIndicator,mContentPager);
+        ViewPagerHelper.bind(mMagicIndicator,mContentPager);//fragment page 和 indicator绑定
     }
 
 }

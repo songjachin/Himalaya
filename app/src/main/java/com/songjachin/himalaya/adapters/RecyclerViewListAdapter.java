@@ -1,5 +1,6 @@
 package com.songjachin.himalaya.adapters;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.songjachin.himalaya.R;
+import com.songjachin.himalaya.utils.LogUtil;
 import com.ximalaya.ting.android.opensdk.model.album.Album;
 
 import java.util.ArrayList;
@@ -21,8 +23,11 @@ import java.util.List;
  * day day up!
  */
 public class RecyclerViewListAdapter extends RecyclerView.Adapter<RecyclerViewListAdapter.InnerHolder> {
+    private static final String TAG = "RecyclerViewListAdapter";
 
     private List<Album> mData = new ArrayList<>();
+    private OnRecommendItemClickListener mRecommendItemClickListener = null;
+
     @NonNull
     @Override
     public InnerHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -36,6 +41,17 @@ public class RecyclerViewListAdapter extends RecyclerView.Adapter<RecyclerViewLi
     public void onBindViewHolder(@NonNull InnerHolder holder, int position) {
         //set the data
         holder.itemView.setTag(position);
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mRecommendItemClickListener != null) {
+                    int position  = (int)v.getTag();
+                    mRecommendItemClickListener.ItemClick(position,mData.get(position));
+                }
+                LogUtil.d(TAG,"onclick ---->"+ v.getTag());
+                //这里要暴露接口OnRecommendItemClickListener
+            }
+        });
         holder.setData(mData.get(position));
     }
 
@@ -63,6 +79,7 @@ public class RecyclerViewListAdapter extends RecyclerView.Adapter<RecyclerViewLi
             super(itemView);
         }
 
+        @SuppressLint("SetTextI18n")
         public void setData(Album album) {
             //find the all views and set data
             //album image
@@ -77,10 +94,20 @@ public class RecyclerViewListAdapter extends RecyclerView.Adapter<RecyclerViewLi
             TextView albumContentSizeText = itemView.findViewById(R.id.album_content_size);
 
             albumTitleText.setText(album.getAlbumTitle());
-            albumDescriptionText.setText(album.getAlbumRichIntro());
-            albumPlayCountText.setText(album.getPlayCount() + "");
+            albumDescriptionText.setText(album.getAlbumIntro());
+            //LogUtil.d(TAG, "album description------>"+ album.getAlbumIntro());
+
+            long playCount =album.getPlayCount()/10000;
+            albumPlayCountText.setText(playCount + "万");
             albumContentSizeText.setText(album.getIncludeTrackCount() + "");
             Glide.with(itemView.getContext()).load(album.getCoverUrlLarge()).into(albumCoverView);
         }
+    }
+
+    public void setOnRecommendItemClickListener(OnRecommendItemClickListener listener){
+        mRecommendItemClickListener = listener;
+    }
+    public interface OnRecommendItemClickListener{
+        void ItemClick(int position, Album album);
     }
 }

@@ -26,6 +26,7 @@
             android:layout_marginTop="5dp"
             android:ellipsize="end"
             android:lines="1"
+            android:textColor="#000000"
             android:text="拿破仑·希尔《成功学全书》拿破仑·希尔《成功学全书》"
             android:textSize="18sp" />
 

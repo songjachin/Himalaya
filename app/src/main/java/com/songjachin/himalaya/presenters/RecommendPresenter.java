@@ -21,12 +21,10 @@ import java.util.Map;
  */
 public class RecommendPresenter implements IRecommendPresenter {
     private static final String TAG = "RecommendPresenter";
-
     private List<IRecommendViewCallback> mCallbacks = new ArrayList<>();
 
     private  RecommendPresenter(){
     }
-
     private static RecommendPresenter sInstance = null;
     /**
      * note: DCL
@@ -45,6 +43,7 @@ public class RecommendPresenter implements IRecommendPresenter {
     @Override
     public void getRecommendList() {
         //获取数据3.X.x猜你喜欢的接口
+        updateLoading();//B向A发送数据，这是正在加载中的页面显示
         Map<String, String> map = new HashMap<String, String>();
         map.put(DTransferConstants.LIKE_COUNT, Constants.RECOMMEND_COUNT + "");
         CommonRequest.getGuessLikeAlbum(map, new IDataCallBack<GussLikeAlbumList>() {
@@ -57,28 +56,52 @@ public class RecommendPresenter implements IRecommendPresenter {
                         //LogUtil.d(TAG, "album size--->" + albumList.size());
                         //LogUtil.d(TAG, "album" + albumList);
                         //updateRecommend(albumList);
-                        handlerRecommendResult(albumList);
+                        handlerRecommendResult(albumList);//B向A发送请求到的数据，
                     }
                 }
             }
 
             @Override
             public void onError(int i, String s) {
-                LogUtil.d(TAG, "error code" + i);
-                LogUtil.d(TAG, "error" + s);
+                //LogUtil.d(TAG, "error code" + i);
+                //LogUtil.d(TAG, "error" + s);
+                handlerError();
             }
         });
 
     }
 
-
-    private void handlerRecommendResult(List<Album> albumList) {
-        //notify the UI
+    private void handlerError() {
         if (mCallbacks != null) {
             for (IRecommendViewCallback mCallback : mCallbacks) {
-                mCallback.onRecommendListLoaded(albumList);
+                mCallback.onNetworkError();
             }
         }
+    }
+
+    private void updateLoading(){
+        if (mCallbacks != null) {
+            for (IRecommendViewCallback mCallback : mCallbacks) {
+                mCallback.onLoading();
+            }
+        }
+    }
+
+    private void handlerRecommendResult(List<Album> albumList) {
+        if (albumList != null) {
+            //albumList.clear();
+            if (albumList.size()==0) {
+                for (IRecommendViewCallback mCallback : mCallbacks) {
+                    mCallback.onEmpty();
+                }
+            }else {
+                for (IRecommendViewCallback mCallback : mCallbacks) {
+                    mCallback.onRecommendListLoaded(albumList);//mCallback是地址，在A的地址调用更新的方法
+                }
+            }
+        }
+        //notify the UI
+
     }
 
     @Override
@@ -94,14 +117,14 @@ public class RecommendPresenter implements IRecommendPresenter {
     @Override
     public void registerViewCallback(IRecommendViewCallback callback) {
         if(mCallbacks!=null && !mCallbacks.contains(callback)){
-            mCallbacks.add(callback);
+            mCallbacks.add(callback);//A中调用B的方法，注册A的地址
         }
     }
 
     @Override
     public void unregisterViewCallback(IRecommendViewCallback callback) {
         if (mCallbacks != null) {
-            mCallbacks.remove(mCallbacks);
+            mCallbacks.remove(callback);
         }
     }
 }

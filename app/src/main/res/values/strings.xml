@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Himalaya</string>
+    <string name="sub_tips_text">+ 订阅</string>
+    <string name="click_play_tips_text">点击播放</string>
 
     <string-array name="indicator_title">
         <item>推荐</item>

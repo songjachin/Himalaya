@@ -14,14 +14,10 @@ public interface IRecommendViewCallback {
      * @param  result
      */
     void onRecommendListLoaded(List<Album> result) ;
-    /**
-     * 加载更多
-     * @param result
-     */
-    void onLoadedMore(List<Album> result);
-    /**
-     * 刷新
-     * @param  result
-     */
-    void onRefreshMore(List<Album> result);
+
+    void onNetworkError();
+
+    void onEmpty();
+
+    void onLoading();
 }

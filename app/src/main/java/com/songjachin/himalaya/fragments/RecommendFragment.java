@@ -1,48 +1,51 @@
 package com.songjachin.himalaya.fragments;
 
+import android.content.Intent;
 import android.graphics.Rect;
-import android.nfc.Tag;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.songjachin.himalaya.DetailActivity;
 import com.songjachin.himalaya.R;
 import com.songjachin.himalaya.adapters.RecyclerViewListAdapter;
 import com.songjachin.himalaya.base.BaseFragment;
-import com.songjachin.himalaya.constants.Constants;
 import com.songjachin.himalaya.interfaces.IRecommendViewCallback;
+import com.songjachin.himalaya.presenters.AlbumDetailPresenterImpl;
 import com.songjachin.himalaya.presenters.RecommendPresenter;
-import com.songjachin.himalaya.utils.LogUtil;
 import com.songjachin.himalaya.utils.UIUtil;
-import com.ximalaya.ting.android.opensdk.constants.DTransferConstants;
-import com.ximalaya.ting.android.opensdk.datatrasfer.CommonRequest;
-import com.ximalaya.ting.android.opensdk.datatrasfer.IDataCallBack;
-import com.ximalaya.ting.android.opensdk.model.album.Album;
-import com.ximalaya.ting.android.opensdk.model.album.GussLikeAlbumList;
+import com.songjachin.himalaya.views.UILoader;
 
-import java.util.HashMap;
+import com.ximalaya.ting.android.opensdk.model.album.Album;
+
 import java.util.List;
-import java.util.Map;
 
 
 /**
  * Created by matthew on 2020/4/24 9:10
  * day day up!
  */
-public class RecommendFragment extends BaseFragment implements IRecommendViewCallback {
+public class RecommendFragment extends BaseFragment implements IRecommendViewCallback, UILoader.OnRetryClickListener, RecyclerViewListAdapter.OnRecommendItemClickListener {
     private static final String TAG = "RecommendFragment";
     private View mRootView;
     private RecyclerView mRecommendRv;
     private RecyclerViewListAdapter mRecyclerViewListAdapter;
     private RecommendPresenter mRecommendPresenter;
+    private UILoader mUILoader;
     @Override
-    protected View onSubViewLoaded(@NonNull LayoutInflater inflater, @Nullable ViewGroup container) {
+    protected View onSubViewLoaded(final LayoutInflater inflater, @Nullable ViewGroup container) {
+          mUILoader = new UILoader(getContext()) {
+            @Override
+            protected View getSuccessView( ViewGroup container) {
+                return createSuccessView(inflater,container);
+            }
+        };
+
         /**
          * @method onSubViewLoaded
          * @Description
@@ -50,6 +53,30 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
          * @param container
          * @return android.view.View
          */
+
+        //获取数据，猜你喜欢的接口
+        //getRecommend(){....updateRecommend()...}
+        //获取逻辑层的对象
+        mRecommendPresenter = RecommendPresenter.getsInstance();
+        //注册更新UI回调的接口,callback--->this相当于A的回调地址，要在B里注册即Present层
+        mRecommendPresenter.registerViewCallback(this);
+        //通过逻辑层获取数据，A向B发起请求，获得数据
+        mRecommendPresenter.getRecommendList();
+
+        //getRecommendData();
+        // 跟父类解绑，android不允许一个已经绑定了的view重复绑定android的View有一个规则，如果这个view已经添加到其他的ViewGroup里了，
+        // 必须要脱离关系才可以加入到新的ViewGroup里.假设你有这么一个场景,你的这个mUiLoader没有销毁，然后又进了你当前Fragment的声明周期方法,
+        // 这个UiLoader不是新创建的,之前已经添加到某个ViewGroup里了.如果你再添加的话则会报错.所以加了这个代码,用于防御.
+        if (mUILoader.getParent() instanceof ViewGroup) {
+            ((ViewGroup) mUILoader.getParent()).removeView(mUILoader);
+        }
+
+        mUILoader.setOnRetryClickListener(this);
+        //返回界面
+        return mUILoader;
+    }
+
+    private View createSuccessView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container) {
         //加载界面
         mRootView = inflater.inflate(R.layout.fragment_recommend, container, false);
 
@@ -73,17 +100,7 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
         //adapter
         mRecyclerViewListAdapter = new RecyclerViewListAdapter();
         mRecommendRv.setAdapter(mRecyclerViewListAdapter);
-        //获取数据，猜你喜欢的接口
-        //getRecommend(){....updateRecommend()...}
-        //获取逻辑层的对象
-        mRecommendPresenter = RecommendPresenter.getsInstance();
-        //通过逻辑层获取数据
-        mRecommendPresenter.getRecommendList();
-        //注册更新UI回调的接口
-        mRecommendPresenter.registerViewCallback(this);
-        //getRecommendData();
-
-        //返回界面
+        mRecyclerViewListAdapter.setOnRecommendItemClickListener(this);
         return mRootView;
     }
 
@@ -100,18 +117,25 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
     @Override
     public void onRecommendListLoaded(List<Album> result) {
         //当获取到数据时，在这里回调更新UI
-        mRecyclerViewListAdapter.setData(result);
+        mRecyclerViewListAdapter.setData(result);//数据成功时把它交给adapter,
+        mUILoader.updateStatus(UILoader.UIStatus.SUCCESS);
     }
 
     @Override
-    public void onLoadedMore(List<Album> result) {
-
+    public void onNetworkError() {
+        mUILoader.updateStatus(UILoader.UIStatus.NETWORK_ERROR);
     }
 
     @Override
-    public void onRefreshMore(List<Album> result) {
-
+    public void onEmpty() {
+        mUILoader.updateStatus(UILoader.UIStatus.EMPTY);
     }
+
+    @Override
+    public void onLoading() {
+        mUILoader.updateStatus(UILoader.UIStatus.LOADING);
+    }
+
 
     @Override
     public void onDestroyView() {
@@ -120,6 +144,23 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
         if (mRecommendPresenter != null) {
             mRecommendPresenter.unregisterViewCallback(this);
         }
+
+    }
+
+    @Override
+    public void onRetryClick() {
+        //retry again
+        if (mRecommendPresenter != null) {
+            mRecommendPresenter.getRecommendList();
+        }
+    }
+
+    @Override
+    public void ItemClick(int position, Album album) {
+        //when the item in recyclerview was clicked and jump to DetailActivity
+        AlbumDetailPresenterImpl.getInstance().setTargetAlbum(album);
+        Intent intent = new Intent(getContext(), DetailActivity.class);
+        startActivity(intent);
 
     }
 }
