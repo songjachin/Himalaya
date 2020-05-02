@@ -1,10 +1,12 @@
 package com.songjachin.himalaya.interfaces;
 
+import com.songjachin.himalaya.base.IBasePresenter;
+
 /**
  * Created by matthew on 2020/4/25 9:44
  * day day up!
  */
-public interface IRecommendPresenter  {
+public interface IRecommendPresenter extends IBasePresenter<IRecommendViewCallback> {
     /**
     *获取推荐内容
      */
@@ -20,7 +22,7 @@ public interface IRecommendPresenter  {
     /**
      * note:这个方法用于注册UI的回调
      */
-    void registerViewCallback(IRecommendViewCallback callback);
+/*    void registerViewCallback(IRecommendViewCallback callback);
 
-    void unregisterViewCallback(IRecommendViewCallback callback);
+    void unregisterViewCallback(IRecommendViewCallback callback);*/
 }

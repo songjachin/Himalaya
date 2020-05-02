@@ -33,6 +33,7 @@
 
 
     </RelativeLayout>
+
     <!--圆角头像-->
     <com.songjachin.himalaya.views.RoundRectImageView
         android:id="@+id/iv_small_cover"
@@ -43,6 +44,33 @@
         android:layout_marginTop="-37dp"
         android:scaleType="fitXY" />
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/iv_large_cover"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="-30dp"
+        android:layout_toRightOf="@id/iv_small_cover"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_album_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="这是标题"
+            android:textColor="@color/white"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/tv_album_author"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="这个是作者信息"
+            android:textColor="@color/sub_text_title"
+            android:textSize="12sp" />
+    </LinearLayout>
+<!--  play  -->
     <RelativeLayout
         android:id="@+id/player_control_container"
         android:layout_width="match_parent"
@@ -93,40 +121,14 @@
             android:layout_marginRight="18dp"
             android:src="@mipmap/arrow_icon" />
 
-
     </RelativeLayout>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/iv_large_cover"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="-30dp"
-        android:layout_toRightOf="@id/iv_small_cover"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/tv_album_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="这是标题"
-            android:textColor="@color/white"
-            android:textSize="18sp" />
-
-        <TextView
-            android:id="@+id/tv_album_author"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="这个是作者信息"
-            android:textColor="@color/sub_text_title"
-            android:textSize="12sp" />
-    </LinearLayout>
-
     <FrameLayout
-        android:id="@+id/detail_list_container"
+        android:id="@+id/detail_frame_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/player_control_container" />
+        android:layout_below="@+id/player_control_container" />
+
+
 
 </RelativeLayout>

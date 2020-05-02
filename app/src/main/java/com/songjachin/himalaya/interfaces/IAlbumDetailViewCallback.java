@@ -16,8 +16,15 @@ public interface IAlbumDetailViewCallback {
      void getAlbumListLoaded(List<Track> tracks);
 
      /**
-      * @param album
+      * @param targetAlbum
       * targetAlbum不空时，把targetAlbum传给UI
       */
      void onAlbumLoaded(Album targetAlbum);
+
+
+    void onNetworkError();
+
+    void onEmpty();
+
+    void onLoading();
 }

@@ -43,7 +43,7 @@ public class IndicatorAdapter extends CommonNavigatorAdapter {
 //            @Override
 //            public void onClick(View v) {
 //                //mViewPager.setCurrentItem(index);
-//                //TODO:
+//                //
 //            }
 //        });
 //        return simplePagerTitleView;
@@ -81,7 +81,7 @@ public class IndicatorAdapter extends CommonNavigatorAdapter {
                 if (mOnTabClickListener != null) {
                     mOnTabClickListener.onTabClick(index);
                 }
-                //TODO:
+                //
             }
         });
         //把这个创建好的view返回回去

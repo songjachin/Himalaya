@@ -1,10 +1,12 @@
 package com.songjachin.himalaya.interfaces;
 
+import com.songjachin.himalaya.base.IBasePresenter;
+
 /**
  * Created by matthew on 2020/4/27 14:50
  * day day up!
  */
-public interface IAlbumDetailPresenter {
+public interface IAlbumDetailPresenter extends IBasePresenter<IAlbumDetailViewCallback>{
     /**
      *下拉加载更多
      */
@@ -20,7 +22,7 @@ public interface IAlbumDetailPresenter {
      */
     void getAlbumDetail(int albumId, int page);
 
-    void registerViewCallback(IAlbumDetailViewCallback callback);
+/*    void registerViewCallback(IAlbumDetailViewCallback callback);
 
-    void  unregisterViewCallback(IAlbumDetailViewCallback callback);
+    void  unregisterViewCallback(IAlbumDetailViewCallback callback);*/
 }

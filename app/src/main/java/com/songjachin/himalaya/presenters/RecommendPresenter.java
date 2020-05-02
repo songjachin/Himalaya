@@ -45,7 +45,7 @@ public class RecommendPresenter implements IRecommendPresenter {
         //获取数据3.X.x猜你喜欢的接口
         updateLoading();//B向A发送数据，这是正在加载中的页面显示
         Map<String, String> map = new HashMap<String, String>();
-        map.put(DTransferConstants.LIKE_COUNT, Constants.RECOMMEND_COUNT + "");
+        map.put(DTransferConstants.LIKE_COUNT, Constants.COUNT_RECOMMEND + "");
         CommonRequest.getGuessLikeAlbum(map, new IDataCallBack<GussLikeAlbumList>() {
             @Override
             public void onSuccess(GussLikeAlbumList gussLikeAlbumList) {

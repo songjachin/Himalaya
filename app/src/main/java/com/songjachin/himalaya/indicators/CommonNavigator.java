@@ -220,7 +220,7 @@ public class CommonNavigator extends FrameLayout implements IPagerNavigator, Nav
                     float nextScrollTo = next.horizontalCenter() - mScrollView.getWidth() * mScrollPivotX;
                     mScrollView.scrollTo((int) (scrollTo + (nextScrollTo - scrollTo) * positionOffset), 0);
                 } else if (!mEnablePivotScroll) {
-                    // TODO 实现待选中项完全显示出来
+                    // TO/DO 实现待选中项完全显示出来
                 }
             }
         }

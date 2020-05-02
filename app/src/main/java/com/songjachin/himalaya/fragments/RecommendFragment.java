@@ -16,7 +16,7 @@ import com.songjachin.himalaya.R;
 import com.songjachin.himalaya.adapters.RecyclerViewListAdapter;
 import com.songjachin.himalaya.base.BaseFragment;
 import com.songjachin.himalaya.interfaces.IRecommendViewCallback;
-import com.songjachin.himalaya.presenters.AlbumDetailPresenterImpl;
+import com.songjachin.himalaya.presenters.DetailPresenter;
 import com.songjachin.himalaya.presenters.RecommendPresenter;
 import com.songjachin.himalaya.utils.UIUtil;
 import com.songjachin.himalaya.views.UILoader;
@@ -54,7 +54,7 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
          * @return android.view.View
          */
 
-        //获取数据，猜你喜欢的接口
+        //获取数据，猜你喜欢的接口3.10.6
         //getRecommend(){....updateRecommend()...}
         //获取逻辑层的对象
         mRecommendPresenter = RecommendPresenter.getsInstance();
@@ -158,7 +158,7 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
     @Override
     public void ItemClick(int position, Album album) {
         //when the item in recyclerview was clicked and jump to DetailActivity
-        AlbumDetailPresenterImpl.getInstance().setTargetAlbum(album);
+        DetailPresenter.getInstance().setTargetAlbum(album);
         Intent intent = new Intent(getContext(), DetailActivity.class);
         startActivity(intent);
 
