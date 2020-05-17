@@ -11,9 +11,10 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
 import com.songjachin.himalaya.DetailActivity;
 import com.songjachin.himalaya.R;
-import com.songjachin.himalaya.adapters.RecyclerViewListAdapter;
+import com.songjachin.himalaya.adapters.AlbumListAdapter;
 import com.songjachin.himalaya.base.BaseFragment;
 import com.songjachin.himalaya.interfaces.IRecommendViewCallback;
 import com.songjachin.himalaya.presenters.DetailPresenter;
@@ -30,11 +31,11 @@ import java.util.List;
  * Created by matthew on 2020/4/24 9:10
  * day day up!
  */
-public class RecommendFragment extends BaseFragment implements IRecommendViewCallback, UILoader.OnRetryClickListener, RecyclerViewListAdapter.OnRecommendItemClickListener {
+public class RecommendFragment extends BaseFragment implements IRecommendViewCallback, UILoader.OnRetryClickListener, AlbumListAdapter.OnRecommendItemClickListener {
     private static final String TAG = "RecommendFragment";
     private View mRootView;
     private RecyclerView mRecommendRv;
-    private RecyclerViewListAdapter mRecyclerViewListAdapter;
+    private AlbumListAdapter mRecyclerViewListAdapter;
     private RecommendPresenter mRecommendPresenter;
     private UILoader mUILoader;
     @Override
@@ -82,7 +83,8 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
 
         //RecyclerView的使用1、找到布局2、布局管理器
         mRecommendRv = (RecyclerView) mRootView.findViewById(R.id.recommend_list);
-
+        TwinklingRefreshLayout twinklingRefreshLayout = mRootView.findViewById(R.id.over_scroll_view);
+        twinklingRefreshLayout.setPureScrollModeOn();
         LinearLayoutManager  linearLayoutManager = new LinearLayoutManager(getContext());
         linearLayoutManager.setOrientation(RecyclerView.VERTICAL);
         mRecommendRv.setLayoutManager(linearLayoutManager);
@@ -98,9 +100,9 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
             }
         });
         //adapter
-        mRecyclerViewListAdapter = new RecyclerViewListAdapter();
+        mRecyclerViewListAdapter = new AlbumListAdapter();
         mRecommendRv.setAdapter(mRecyclerViewListAdapter);
-        mRecyclerViewListAdapter.setOnRecommendItemClickListener(this);
+        mRecyclerViewListAdapter.setOnAlbumItemClickListener(this);
         return mRootView;
     }
 
