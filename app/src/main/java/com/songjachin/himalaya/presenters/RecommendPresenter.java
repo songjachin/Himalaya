@@ -1,6 +1,7 @@
 package com.songjachin.himalaya.presenters;
 
 import com.songjachin.himalaya.constants.Constants;
+import com.songjachin.himalaya.data.XimalayApi;
 import com.songjachin.himalaya.interfaces.IRecommendPresenter;
 import com.songjachin.himalaya.interfaces.IRecommendViewCallback;
 import com.songjachin.himalaya.utils.LogUtil;
@@ -22,6 +23,7 @@ import java.util.Map;
 public class RecommendPresenter implements IRecommendPresenter {
     private static final String TAG = "RecommendPresenter";
     private List<IRecommendViewCallback> mCallbacks = new ArrayList<>();
+    private List<Album> mCurrentRecommend = null;
 
     private  RecommendPresenter(){
     }
@@ -39,14 +41,20 @@ public class RecommendPresenter implements IRecommendPresenter {
         }
         return sInstance;
     }
-
+    /**
+     * 获取当前的推荐专辑列表
+     *
+     * @return 推荐专辑列表，使用这前要判空
+     */
+    public List<Album> getCurrentRecommend() {
+        return mCurrentRecommend;
+    }
     @Override
     public void getRecommendList() {
         //获取数据3.X.x猜你喜欢的接口
         updateLoading();//B向A发送数据，这是正在加载中的页面显示
-        Map<String, String> map = new HashMap<String, String>();
-        map.put(DTransferConstants.LIKE_COUNT, Constants.COUNT_RECOMMEND + "");
-        CommonRequest.getGuessLikeAlbum(map, new IDataCallBack<GussLikeAlbumList>() {
+        XimalayApi ximalayApi = XimalayApi.getXimalayApi();
+        ximalayApi.getRecommendList(new IDataCallBack<GussLikeAlbumList>() {
             @Override
             public void onSuccess(GussLikeAlbumList gussLikeAlbumList) {
                 LogUtil.d(TAG,"thread -----> " + Thread.currentThread().getName());
@@ -98,6 +106,8 @@ public class RecommendPresenter implements IRecommendPresenter {
                 for (IRecommendViewCallback mCallback : mCallbacks) {
                     mCallback.onRecommendListLoaded(albumList);//mCallback是地址，在A的地址调用更新的方法
                 }
+
+                this.mCurrentRecommend = albumList;
             }
         }
         //notify the UI

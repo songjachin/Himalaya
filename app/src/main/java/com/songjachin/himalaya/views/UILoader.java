@@ -94,9 +94,7 @@ public abstract class UILoader extends FrameLayout {
         mEmptyView.setVisibility(mCurrentStatus==UIStatus.EMPTY?VISIBLE:GONE);
     }
 
-    private View getEmptyView() {
-        return LayoutInflater.from(getContext()).inflate(R.layout.fragment_empty_view, this,false);
-    }
+    protected abstract View getEmptyView();
 
     private View getErrorView() {
         View viewNetworkError = LayoutInflater.from(getContext()).inflate(R.layout.fragment_error_view, this,false);

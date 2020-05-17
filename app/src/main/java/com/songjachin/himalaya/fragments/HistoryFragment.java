@@ -10,6 +10,10 @@ import androidx.annotation.Nullable;
 
 import com.songjachin.himalaya.R;
 import com.songjachin.himalaya.base.BaseFragment;
+import com.songjachin.himalaya.interfaces.IHistoryCallback;
+import com.ximalaya.ting.android.opensdk.model.track.Track;
+
+import java.util.List;
 
 /**
  * @author songjachin
@@ -18,7 +22,7 @@ import com.songjachin.himalaya.base.BaseFragment;
  * @date 2020-04-25 10:18
  */
 
-public class HistoryFragment extends BaseFragment {
+public class HistoryFragment extends BaseFragment implements IHistoryCallback {
 
     @Override
     protected View onSubViewLoaded(@NonNull LayoutInflater inflater, @Nullable ViewGroup container) {
@@ -26,4 +30,8 @@ public class HistoryFragment extends BaseFragment {
         return rootView;
     }
 
+    @Override
+    public void onHistoriesLoaded(List<Track> tracks) {
+
+    }
 }

@@ -31,7 +31,7 @@ import java.util.List;
  * Created by matthew on 2020/4/24 9:10
  * day day up!
  */
-public class RecommendFragment extends BaseFragment implements IRecommendViewCallback, UILoader.OnRetryClickListener, AlbumListAdapter.OnRecommendItemClickListener {
+public class AlbumFragment extends BaseFragment implements IRecommendViewCallback, UILoader.OnRetryClickListener, AlbumListAdapter.OnAlbumItemClickListener {
     private static final String TAG = "RecommendFragment";
     private View mRootView;
     private RecyclerView mRecommendRv;
@@ -45,6 +45,12 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
             protected View getSuccessView( ViewGroup container) {
                 return createSuccessView(inflater,container);
             }
+              @Override
+              protected View getEmptyView() {
+                  //创建一个新的
+                  View emptyView = LayoutInflater.from(getContext()).inflate(R.layout.fragment_empty_view, this, false);
+                  return emptyView;
+              }
         };
 
         /**
@@ -158,7 +164,7 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
     }
 
     @Override
-    public void ItemClick(int position, Album album) {
+    public void onItemClick(int position, Album album) {
         //when the item in recyclerview was clicked and jump to DetailActivity
         DetailPresenter.getInstance().setTargetAlbum(album);
         Intent intent = new Intent(getContext(), DetailActivity.class);

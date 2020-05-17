@@ -2,7 +2,7 @@ package com.songjachin.himalaya.utils;
 
 import com.songjachin.himalaya.base.BaseFragment;
 import com.songjachin.himalaya.fragments.HistoryFragment;
-import com.songjachin.himalaya.fragments.RecommendFragment;
+import com.songjachin.himalaya.fragments.AlbumFragment;
 import com.songjachin.himalaya.fragments.SubscriptionFragment;
 
 import java.util.HashMap;
@@ -33,7 +33,7 @@ public class FragmentCreator {
                 baseFragment = new SubscriptionFragment();
                 break;
             case INDEX_RECOMMEND:
-                baseFragment = new RecommendFragment();
+                baseFragment = new AlbumFragment();
                 break;
             case INDEX_HISTORY:
                 baseFragment = new HistoryFragment();

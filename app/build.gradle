@@ -6,7 +6,6 @@ android {
     ndkVersion '21.0.6113669'
 
 
-
     defaultConfig {
         applicationId "com.songjachin.himalaya"
         minSdkVersion 21
@@ -50,4 +49,7 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
     implementation 'com.squareup.picasso:picasso:2.71828'
+    implementation 'com.lcodecorex:tkrefreshlayout:1.0.7'
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation "io.reactivex.rxjava2:rxjava:2.2.14"
 }

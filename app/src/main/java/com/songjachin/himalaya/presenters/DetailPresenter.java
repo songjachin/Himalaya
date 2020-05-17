@@ -1,8 +1,12 @@
 package com.songjachin.himalaya.presenters;
 
+import androidx.annotation.Nullable;
+
 import com.songjachin.himalaya.constants.Constants;
+import com.songjachin.himalaya.data.XimalayApi;
 import com.songjachin.himalaya.interfaces.IAlbumDetailPresenter;
 import com.songjachin.himalaya.interfaces.IAlbumDetailViewCallback;
+import com.songjachin.himalaya.utils.LogUtil;
 import com.ximalaya.ting.android.opensdk.constants.DTransferConstants;
 import com.ximalaya.ting.android.opensdk.datatrasfer.CommonRequest;
 import com.ximalaya.ting.android.opensdk.datatrasfer.IDataCallBack;
@@ -20,9 +24,14 @@ import java.util.Map;
  * day day up!
  */
 public class DetailPresenter implements IAlbumDetailPresenter {
-    private static final String TAG = "AlbumDetailPresenterImp";
+    private static final String TAG = "DetailPresenter";
     private Album mTargetAlbum = null;
     private List<IAlbumDetailViewCallback> mCallbacks = new ArrayList<>();
+    private List<Track> mTracks = new ArrayList<>();
+    //当前的专辑id
+    private int mCurrentAlbumId = -1;
+    //当前页
+    private int mCurrentPageIndex = 0;
 
     private DetailPresenter(){
     }
@@ -45,42 +54,81 @@ public class DetailPresenter implements IAlbumDetailPresenter {
 
     @Override
     public void loadMore() {
-
+        //去加载更多内容
+        mCurrentPageIndex++;
+        LogUtil.d(TAG,"mCurrentpage"+ mCurrentPageIndex);
+        //传入true，表示结果会追加到列表的后方。
+        doLoaded(true);
     }
 
-    @Override
-    public void getAlbumDetail(int albumId, int page) {
-        updateLoading();
-        Map<String, String> map = new HashMap<String, String>();
-        map.put(DTransferConstants.ALBUM_ID, albumId + "");
-        map.put(DTransferConstants.SORT, "time_asc");
-        map.put(DTransferConstants.PAGE, page + "");
-        map.put(DTransferConstants.PAGE_SIZE, Constants.COUNT_TRACKS + "");
-        CommonRequest.getTracks(map, new IDataCallBack<TrackList>() {
+    private void doLoaded(final boolean isLoaderMore) {
+        XimalayApi ximalayApi = XimalayApi.getXimalayApi();
+        ximalayApi.getAlbumDetail(new IDataCallBack<TrackList>() {
             @Override
-            public void onSuccess(TrackList trackList) {
+            public void onSuccess(@Nullable TrackList trackList) {
                 if (trackList != null) {
                     List<Track> tracks = trackList.getTracks();
-                   // LogUtil.d(TAG,"track list---->" + tracks.size());
-                    handlerDetailItemResult(tracks);
+                    LogUtil.d(TAG, "tracks size -- > " + mTracks.size());
+                    if (isLoaderMore) {
+                        //上拉加载，结果放到后面去
+                        mTracks.addAll(tracks);
+                        LogUtil.d(TAG,"mTrack add All tracks");
+                        int size = tracks.size();
+                        handlerLoaderMoreResult(size);
+                    } else {
+                        //这个是下拉加载，结果放到前面去
+                        mTracks.addAll(0, tracks);
+                    }
+                    LogUtil.d(TAG,"track size--2----->"+ mTracks.size());
+                    handlerAlbumDetailResult(mTracks);
                 }
             }
 
             @Override
-            public void onError(int i, String s) {
-                    //LogUtil.d(TAG,"error--->" + i);
-                   // LogUtil.d(TAG,"error msg--->" + s);
-                handlerError();
-
+            public void onError(int errorCode, String errorMsg) {
+                if (isLoaderMore) {
+                    mCurrentPageIndex--;
+                }
+                LogUtil.d(TAG, "errorCode -- >   " + errorCode);
+                LogUtil.d(TAG, "errorMsg -- >   " + errorMsg);
+                handlerLoadError(errorCode, errorMsg);
             }
-        });
+        }, mCurrentAlbumId, mCurrentPageIndex);
+    }
+
+    private void handlerLoadError(int errorCode, String errorMsg) {
+        for (IAlbumDetailViewCallback callback : mCallbacks) {
+            callback.onNetworkError(errorCode, errorMsg);
+        }
+    }
+
+    private void handlerAlbumDetailResult(List<Track> tracks) {
+        for (IAlbumDetailViewCallback mCallback : mCallbacks) {
+            mCallback.getAlbumListLoaded(tracks);
+        }
+    }
+
+    private void handlerLoaderMoreResult(int size) {
+        for (IAlbumDetailViewCallback callback : mCallbacks) {
+            callback.onLoaderMoreFinished(size);
+        }
+    }
+
+    @Override
+    public void getAlbumDetail(int albumId, int page) {
+        mTracks.clear();
+        this.mCurrentAlbumId = albumId;
+        this.mCurrentPageIndex = page;
+        //根据页码和专辑id获取列表
+        doLoaded(false);
+
 
     }
 
-    private void handlerError() {
+    private void handlerError(int errorCode, String errorMsg) {
         if (mCallbacks != null) {
             for (IAlbumDetailViewCallback mCallback : mCallbacks) {
-                mCallback.onNetworkError();
+                mCallback.onNetworkError( errorCode, errorMsg);
             }
         }
     }
