@@ -108,9 +108,15 @@ public class AlbumListAdapter extends RecyclerView.Adapter<AlbumListAdapter.Inne
             albumTitleText.setText(album.getAlbumTitle());
             albumDescriptionText.setText(album.getAlbumIntro());
             //LogUtil.d(TAG, "album description------>"+ album.getAlbumIntro());
+            String playNumber = "0";
+            if(album.getPlayCount()>10000){
+                long playCount =album.getPlayCount()/10000;
+                playNumber = playCount+ "万";
+            }else{
+                playNumber = String.valueOf(album.getPlayCount());
+            }
 
-            long playCount =album.getPlayCount()/10000;
-            albumPlayCountText.setText(playCount + "万");
+            albumPlayCountText.setText(playNumber);
             albumContentSizeText.setText(album.getIncludeTrackCount() + "");
             Glide.with(itemView.getContext()).load(album.getCoverUrlLarge()).into(albumCoverView);
         }

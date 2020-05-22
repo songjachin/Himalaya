@@ -25,6 +25,7 @@ public class DetailListAdapter extends RecyclerView.Adapter<DetailListAdapter.In
     private SimpleDateFormat mUpdateDateFormat = new SimpleDateFormat("yyyy-MM--dd");
     private SimpleDateFormat mDurationFormat = new SimpleDateFormat("mm:ss");
     private OnItemClickListener mItemClickListener = null;
+    private OnItemLongClickListener mItemLongClickListener;
 
     @NonNull
     @Override
@@ -45,6 +46,16 @@ public class DetailListAdapter extends RecyclerView.Adapter<DetailListAdapter.In
                     mItemClickListener.onItemClick(mDetailData, position);
                 }
 
+            }
+        });
+        final Track track = mDetailData.get(position);
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (mItemLongClickListener != null) {
+                    mItemLongClickListener.onItemLongClick(track);
+                }
+                return true;
             }
         });
     }
@@ -100,5 +111,12 @@ public class DetailListAdapter extends RecyclerView.Adapter<DetailListAdapter.In
     public interface OnItemClickListener{
         //
         void onItemClick(List<Track> detailData, int position);
+    }
+
+    public void setOnItemLongClickListener(OnItemLongClickListener listener){
+        this.mItemLongClickListener = listener;
+    }
+    public interface OnItemLongClickListener{
+        void onItemLongClick(Track track);
     }
 }

@@ -383,6 +383,7 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
         mPlayerManager.setPlayMode(mCurrentPlayMode);
         if(mPlayerManager.getPlayerStatus() == PlayerConstants.STATE_PREPARED) {
             //播放器准备完了，可以去播放了
+
             mPlayerManager.play();
         }
     }
@@ -411,7 +412,8 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
             mCurrentTrack = currentTrack;
             mCurrentIndex = mPlayerManager.getCurrentIndex();
             //保存播放记录
-
+            HistoryPresenter historyPresenter = HistoryPresenter.getInstance();
+            historyPresenter.addHistory(mCurrentTrack);
             LogUtil.d(TAG, "title =-= > " + currentTrack.getTrackTitle());
             //更新UI
             for (IPlayerCallback iPlayerCallback : mPlayerCallbacks) {

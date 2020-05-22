@@ -24,6 +24,7 @@ public class RecommendPresenter implements IRecommendPresenter {
     private static final String TAG = "RecommendPresenter";
     private List<IRecommendViewCallback> mCallbacks = new ArrayList<>();
     private List<Album> mCurrentRecommend = null;
+    private List<Album> mAlbumList;
 
     private  RecommendPresenter(){
     }
@@ -51,6 +52,12 @@ public class RecommendPresenter implements IRecommendPresenter {
     }
     @Override
     public void getRecommendList() {
+        //如果内容不空的话，那么直接使用当前的内容
+        if(mAlbumList != null && mAlbumList.size() > 0) {
+            LogUtil.d(TAG,"getRecommendList -- > from list.");
+            handlerRecommendResult(mAlbumList);
+            return;
+        }
         //获取数据3.X.x猜你喜欢的接口
         updateLoading();//B向A发送数据，这是正在加载中的页面显示
         XimalayApi ximalayApi = XimalayApi.getXimalayApi();
@@ -59,12 +66,12 @@ public class RecommendPresenter implements IRecommendPresenter {
             public void onSuccess(GussLikeAlbumList gussLikeAlbumList) {
                 LogUtil.d(TAG,"thread -----> " + Thread.currentThread().getName());
                 if (gussLikeAlbumList != null) {
-                    List<Album> albumList = gussLikeAlbumList.getAlbumList();
-                    if (albumList != null) {
+                    mAlbumList = gussLikeAlbumList.getAlbumList();
+                    if (mAlbumList != null) {
                         //LogUtil.d(TAG, "album size--->" + albumList.size());
                         //LogUtil.d(TAG, "album" + albumList);
                         //updateRecommend(albumList);
-                        handlerRecommendResult(albumList);//B向A发送请求到的数据，
+                        handlerRecommendResult(mAlbumList);//B向A发送请求到的数据，
                     }
                 }
             }
